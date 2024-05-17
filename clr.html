@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+     body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .calculator {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 300px;
+        }
+
+        .display {
+            background-color: #f0f0f0;
+            border: none;
+            font-size: 2rem;
+            height: 70px;
+            line-height: 70px;
+            padding: 0 15px;
+            text-align: right;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+        }
+
+        button {
+            background-color: #e0e0e0;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: background-color 0.3s;
+            width: 100%;
+            height: 60px;
+        }
+
+        button:hover {
+            background-color: #cfd8dc;
+        }
+
+        button.operator {
+            background-color: #ffa000;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        button.clear {
+            background-color: #e57373;
+            color: #fff;
+        }
+
+        button.equal {
+            background-color: #64b5f6;
+            color: #fff;
+        }
+
+        button:active {
+            background-color: #b0bec5;
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="text/babel">
+        // Calculator component
+        function Calculator() {
+            // State to store the current value
+            const [displayValue, setDisplayValue] = React.useState('0');
+
+            // Function to handle button clicks
+            const handleButtonClick = (value) => {
+                if (value === '=') {
+                    try {
+                        setDisplayValue(eval(displayValue).toString());
+                    } catch (error) {
+                        setDisplayValue('Error');
+                    }
+                } else if (value === 'C') {
+                    setDisplayValue('0');
+                } else {
+                    setDisplayValue((prevValue) => prevValue === '0' ? value : prevValue + value);
+                }
+            };
+
+            // JSX for rendering
+            return (
+                <div className="calculator">
+                    <div className="display">{displayValue}</div>
+                    
+                    <div className="button-grid">
+                        {[7, 8, 9, '+', 4, 5, 6, '-', 1, 2, 3, '*', 'C', 0, '=', '/'].map((value, index) => (
+                            <CalcButton key={index} value={value} onClick={() => handleButtonClick(value)} />
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        // CalcButton component
+        function CalcButton({ value, onClick }) {
+            // Determine button type based on the value
+            const buttonType = value === 'C' ? 'clear' : value === '=' ? 'equal' : ['+', '-', '*', '/'].includes(value) ? 'operator' : '';
+
+            // Set appropriate class based on button type
+            const buttonClass = buttonType ? `${buttonType} button` : 'button';
+
+            return (
+                <button className={buttonClass} onClick={onClick}>{value}</button>
+            );
+        }
+
+        ReactDOM.render(<div className="app-container"><Calculator /></div>, document.getElementById("app"));
+    </script>
+</body>
+</html>
